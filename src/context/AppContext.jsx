@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const AppContext = createContext(null);
+axios.defaults.withCredentials = true;
 
 export const AppContextProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -11,12 +12,11 @@ export const AppContextProvider = ({ children }) => {
   const backEndUrl = import.meta.env.VITE_BACKEND_URL;
 
   const getUserData = async () => {
-    axios.defaults.withCredentials = true;
     try {
       const { data } = await axios.get(`${backEndUrl}/api/user/data`);
       data.status === "Success"
         ? setUserData(data.data)
-        : toast.errr(data.message);
+        : toast.error(data.message);
     } catch (error) {
       toast.error(error.response?.data?.message || "Server error");
     }

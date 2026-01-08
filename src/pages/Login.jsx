@@ -26,7 +26,7 @@ const Login = () => {
         });
         if (data.status === "Success") {
           setIsLoggedIn(true);
-          getUserData();
+          getUserData(); // ❌ cookie may not exist yet
           navigate("/");
         } else {
           toast.error(data.message);
