@@ -1,0 +1,5 @@
+[[redirects]]
+  from = "/api/*"
+  to = "https://password-reset-backend-lzsu.onrender.com/api/:splat"
+  status = 200
+  force = true

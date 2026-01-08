@@ -6,20 +6,22 @@ import axios from "axios";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { userData, backEndUrl, setIsLoggedIn, setUserData } =
-    useContext(AppContext);
+  const { userData, setIsLoggedIn, setUserData } = useContext(AppContext);
 
   const logOut = async () => {
     try {
-      axios.defaults.withCredentials = true;
-      const { data } = await axios.post(`${backEndUrl}/api/auth/logOut`);
-      data.status === "Success" && setIsLoggedIn(false);
-      data.status === "Success" && setUserData("");
-      navigate("/");
+      const { data } = await axios.post("/auth/logOut");
+
+      if (data.status === "Success") {
+        setIsLoggedIn(false);
+        setUserData("");
+        navigate("/");
+      }
     } catch (error) {
-      toast.error(error.message);
+      toast.error(error.response?.data?.message || "Server error");
     }
   };
+
 
   return (
     <div className="flex justify-between w-full items-center p-4 sm:p-6 sm:px-24">
