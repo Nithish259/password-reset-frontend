@@ -1,24 +1,16 @@
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
-import { toast } from "react-toastify";
-import axios from "axios";
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { userData, backEndUrl, setIsLoggedIn, setUserData } =
-    useContext(AppContext);
+  const { userData, setIsLoggedIn, setUserData } = useContext(AppContext);
 
-  const logOut = async () => {
-    try {
-      axios.defaults.withCredentials = true;
-      const { data } = await axios.post(`${backEndUrl}/api/auth/logOut`);
-      data.status === "Success" && setIsLoggedIn(false);
-      data.status === "Success" && setUserData("");
-      navigate("/");
-    } catch (error) {
-      toast.error(error.message);
-    }
+  const logOut = () => {
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+    setUserData(null);
+    navigate("/");
   };
 
   return (

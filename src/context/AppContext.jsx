@@ -4,7 +4,6 @@ import { toast } from "react-toastify";
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const AppContext = createContext(null);
-axios.defaults.withCredentials = true;
 
 export const AppContextProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -13,7 +12,19 @@ export const AppContextProvider = ({ children }) => {
 
   const getUserData = async () => {
     try {
-      const { data } = await axios.get(`${backEndUrl}/api/user/data`);
+      const token = localStorage.getItem("token"); // JWT stored after login
+
+      if (!token) {
+        toast.error("Please login again");
+        return;
+      }
+
+      const { data } = await axios.get(`${backEndUrl}/api/user/data`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
       data.status === "Success"
         ? setUserData(data.data)
         : toast.error(data.message);

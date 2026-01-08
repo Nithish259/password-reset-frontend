@@ -16,7 +16,6 @@ const Login = () => {
   const onSubmitHandler = async (e) => {
     try {
       e.preventDefault();
-      axios.defaults.withCredentials = true;
 
       if (title === "Sign Up") {
         const { data } = await axios.post(`${backEndUrl}/api/auth/register`, {
@@ -24,13 +23,19 @@ const Login = () => {
           email,
           password,
         });
+
         if (data.status === "Success") {
+          // 1️⃣ Store token
+          localStorage.setItem("token", data.token);
+
           setIsLoggedIn(true);
-          getUserData(); // ❌ cookie may not exist yet
+
+          // 2️⃣ Now token exists → safe to call
+          await getUserData();
+
           navigate("/");
         } else {
           toast.error(data.message);
-          return;
         }
       } else {
         const { data } = await axios.post(`${backEndUrl}/api/auth/login`, {
@@ -39,18 +44,24 @@ const Login = () => {
         });
 
         if (data.status === "Success") {
+          // 1️⃣ Store token
+          localStorage.setItem("token", data.token);
+
           setIsLoggedIn(true);
-          getUserData();
+
+          // 2️⃣ Now token exists
+          await getUserData();
+
           navigate("/");
         } else {
           toast.error(data.message);
-          return;
         }
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Server error");
     }
   };
+
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-6 sm:px-0 bg-linear-to-br from-blue-200 to-purple-600">
