@@ -1,9 +1,9 @@
 import { Route, Routes } from "react-router-dom";
-import Home from "./pages/home";
 import Login from "./pages/Login";
 import ResetPassword from "./pages/ResetPassword";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Opening from "./pages/Opening";
 
 function App() {
   return (
@@ -21,7 +21,7 @@ function App() {
         theme="light"
       />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Opening />} />
         <Route path="/login" element={<Login />} />
         <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>

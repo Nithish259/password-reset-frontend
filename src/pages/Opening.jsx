@@ -1,7 +1,7 @@
 import Header from "../components/Header";
 import Navbar from "../components/Navbar";
 
-const Home = () => {
+const Opening = () => {
   return (
     <div className="flex flex-col relative min-h-screen">
       <Navbar />
@@ -10,4 +10,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Opening;
