@@ -14,51 +14,45 @@ const ResetPassword = () => {
 
   const { backEndUrl } = useContext(AppContext);
 
- const onSubmitEmail = async (e) => {
-   e.preventDefault();
+  const onSubmitEmail = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await axios.post(`${backEndUrl}/api/auth/sendResetOtp`, {
+        email,
+      });
+      data.status === "Success"
+        ? toast.success(data.message)
+        : toast.error(data.message);
+      data.status === "Success" && setIsEmailSent(true);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
 
-   try {
-     const { data } = await axios.post("/auth/sendResetOtp", {
-       email,
-     });
+  const onSubmitOtp = async (e) => {
+    e.preventDefault();
+    setIsOtpSubmitted(true);
+  };
 
-     if (data.status === "Success") {
-       toast.success(data.message);
-       setIsEmailSent(true);
-     } else {
-       toast.error(data.message);
-     }
-   } catch (error) {
-     toast.error(error.response?.data?.message || "Server error");
-   }
- };
-
- const onSubmitOtp = async (e) => {
-   e.preventDefault();
-   setIsOtpSubmitted(true);
- };
-
- const onResetPassword = async (e) => {
-   e.preventDefault();
-
-   try {
-     const { data } = await axios.post("/auth/resetPassword", {
-       email,
-       otp,
-       newPassword,
-     });
-
-     if (data.status === "Success") {
-       toast.success(data.message);
-       navigate("/login");
-     } else {
-       toast.error(data.message);
-     }
-   } catch (error) {
-     toast.error(error.response?.data?.message || "Server error");
-   }
- };
-
+  const onResetPassword = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await axios.post(
+        `${backEndUrl}/api/auth/resetPassword`,
+        {
+          email,
+          otp,
+          newPassword,
+        }
+      );
+      data.status === "Success"
+        ? toast.success(data.message)
+        : toast.error(data.message);
+      data.status === "Success" && navigate("/login");
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen px-6 sm:px-0 bg-linear-to-br from-blue-200 to-purple-600">

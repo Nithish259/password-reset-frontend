@@ -11,45 +11,46 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const { setIsLoggedIn, getUserData } = useContext(AppContext);
+  const { setIsLoggedIn, backEndUrl, getUserData } = useContext(AppContext);
 
   const onSubmitHandler = async (e) => {
-    e.preventDefault();
-
     try {
+      e.preventDefault();
+      axios.defaults.withCredentials = true;
+
       if (title === "Sign Up") {
-        const { data } = await axios.post("/auth/register", {
+        const { data } = await axios.post(`${backEndUrl}/api/auth/register`, {
           name,
           email,
           password,
         });
-
         if (data.status === "Success") {
           setIsLoggedIn(true);
-          await getUserData();
+          getUserData();
           navigate("/");
         } else {
           toast.error(data.message);
+          return;
         }
       } else {
-        const { data } = await axios.post("/auth/login", {
+        const { data } = await axios.post(`${backEndUrl}/api/auth/login`, {
           email,
           password,
         });
 
         if (data.status === "Success") {
           setIsLoggedIn(true);
-          await getUserData();
+          getUserData();
           navigate("/");
         } else {
           toast.error(data.message);
+          return;
         }
       }
     } catch (error) {
       toast.error(error.response?.data?.message || "Server error");
     }
   };
-
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen px-6 sm:px-0 bg-linear-to-br from-blue-200 to-purple-600">
