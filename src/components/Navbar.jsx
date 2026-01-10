@@ -1,9 +1,10 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 
 const Navbar = () => {
   const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
   const { userData, setIsLoggedIn, setUserData } = useContext(AppContext);
 
   const logOut = () => {
@@ -26,18 +27,31 @@ const Navbar = () => {
       </div>
 
       {userData ? (
-        <div className="w-8 h-8 flex items-center justify-center rounded-full bg-black text-sm text-white relative group">
-          {userData.name[0].toUpperCase()}
-          <div className="absolute hidden group-hover:block top-0 right-0 z-10 text-black rounded-full pt-10">
-            <ul className="list-none m-0 p-2 bg-gray-100 text-sm">
-              <li
-                onClick={() => logOut()}
-                className="py-1 px-2 hover:bg-gray-200 cursor-pointer pr-10"
-              >
-                LogOut
-              </li>
-            </ul>
+        <div className="w-8 h-8 relative">
+          {/* Avatar */}
+          <div
+            onClick={() => setOpen(!open)}
+            className="w-8 h-8 flex items-center justify-center rounded-full bg-black text-sm text-white cursor-pointer select-none"
+          >
+            {userData.name[0].toUpperCase()}
           </div>
+
+          {/* Dropdown */}
+          {open && (
+            <div className="absolute right-0 mt-2 bg-white shadow-lg rounded-md w-28 z-20">
+              <ul className="text-sm text-gray-700">
+                <li
+                  onClick={() => {
+                    logOut();
+                    setOpen(false);
+                  }}
+                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
+                >
+                  Logout
+                </li>
+              </ul>
+            </div>
+          )}
         </div>
       ) : (
         <button

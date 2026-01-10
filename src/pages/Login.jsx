@@ -126,7 +126,7 @@ const Login = () => {
           </div>
 
           <p
-            onClick={() => navigate("/reset-password")}
+            onClick={() => navigate("/forgot-password")}
             className="text-indigo-500 cursor-pointer text-xs"
           >
             Forget Password?

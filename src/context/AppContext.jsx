@@ -1,23 +1,17 @@
 import axios from "axios";
 import { createContext, useEffect, useState } from "react";
-import { toast } from "react-toastify";
 
-// eslint-disable-next-line react-refresh/only-export-components
 export const AppContext = createContext(null);
 
 export const AppContextProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userData, setUserData] = useState("");
+  const [userData, setUserData] = useState(null);
   const backEndUrl = import.meta.env.VITE_BACKEND_URL;
 
   const getUserData = async () => {
     try {
-      const token = localStorage.getItem("token"); // JWT stored after login
-
-      if (!token) {
-        toast.error("Please login again");
-        return;
-      }
+      const token = localStorage.getItem("token");
+      if (!token) return; // user is simply not logged in
 
       const { data } = await axios.get(`${backEndUrl}/api/user/data`, {
         headers: {
@@ -25,11 +19,14 @@ export const AppContextProvider = ({ children }) => {
         },
       });
 
-      data.status === "Success"
-        ? setUserData(data.data)
-        : toast.error(data.message);
+      if (data.status === "Success") {
+        setUserData(data.data);
+        setIsLoggedIn(true);
+      } else {
+        localStorage.removeItem("token");
+      }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Server error");
+      localStorage.removeItem("token");
     }
   };
 
@@ -41,9 +38,9 @@ export const AppContextProvider = ({ children }) => {
   const value = {
     isLoggedIn,
     setIsLoggedIn,
-    backEndUrl,
     userData,
     setUserData,
+    backEndUrl,
     getUserData,
   };
 

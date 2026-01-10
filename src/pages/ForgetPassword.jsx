@@ -1,37 +1,35 @@
-import { useContext, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useState, useContext } from "react";
 import { AppContext } from "../context/AppContext";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
-const ResetPassword = () => {
-  const { token } = useParams(); // 🔑 token from URL
-  const [password, setPassword] = useState("");
+const ForgotPassword = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
   const { backEndUrl } = useContext(AppContext);
 
-  const onSubmit = async (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
 
     try {
       const { data } = await axios.post(
-        `${backEndUrl}/api/auth/resetPassword/${token}`,
-        { password }
+        `${backEndUrl}/api/auth/sendResetLink`,
+        { email }
       );
 
       if (data.status === "Success") {
-        toast.success("Password updated successfully");
-        navigate("/login");
+        toast.success("Reset link sent to your email");
       } else {
         toast.error(data.message);
       }
     } catch (error) {
-      toast.error(error.response?.data?.message || "Invalid or expired link");
+      toast.error(error.response?.data?.message || "Error");
     }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-linear-to-br from-blue-200 to-purple-600">
+    <div className="flex justify-center items-center min-h-screen bg-linear-to-br from-blue-200 to-purple-600">
       <div
         onClick={() => navigate("/")}
         className="absolute left-0 top-0 flex p-2 items-center gap-3"
@@ -45,35 +43,30 @@ const ResetPassword = () => {
         </h1>
       </div>
       <form
-        onSubmit={onSubmit}
-        className="bg-slate-900 text-indigo-200 w-full sm:w-1/4 text-sm p-8 rounded shadow"
+        onSubmit={submitHandler}
+        className=" bg-slate-900 text-indigo-200 w-full sm:w-1/4 text-sm p-8 rounded shadow"
       >
-        <h1 className="text-white text-xl text-center mb-4">
-          Reset Your Password
-        </h1>
-
-        <p className="text-sm text-center mb-4">
-          Please enter your New Password
-        </p>
+        <h2 className="text-center text-white text-xl mb-4">Forgot Password</h2>
+        <p className="text-center mb-4">Please enter you registered email id</p>
 
         <div className="mb-4 flex items-center gap-3 w-full bg-[#333A56] px-5 py-2.5 text-white rounded-full">
-          <i class="fa-solid fa-lock"></i>
+          <i class="fa-solid fa-envelope"></i>
           <input
-            type="password"
-            placeholder="New Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            type="email"
+            placeholder="Enter your email"
             className="bg-transparent outline-none"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>
 
         <button className="mt-3 w-full px-4 py-2 rounded-full text-white bg-linear-to-r from-indigo-300 to-indigo-600">
-          Reset Password
+          Send Reset Link
         </button>
       </form>
     </div>
   );
 };
 
-export default ResetPassword;
+export default ForgotPassword;
